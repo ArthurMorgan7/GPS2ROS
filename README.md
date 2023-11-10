@@ -5,8 +5,8 @@ Accept data in GPGGA/BESTUTM format through the serial port and convert it into 
 
 # Install
 ```bash
-mkdir GPGGA2ROS_ws
-cd GPGGA2ROS_ws
+mkdir GPS2ROS_ws
+cd GPS2ROS_ws
 mkdir src
 cd src
 git clone https://github.com/ArthurMorgan7/GPS2ROS.git
