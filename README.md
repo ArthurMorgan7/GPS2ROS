@@ -18,7 +18,10 @@ rosrun serialPort pubneg
 ```
 
 # NOTICE
+
+```
 Default topic: "/GPS"
 Default baud rate: 115200
 Default command: log bestutm ontime 1
 Optional command:log gpgga ontime 1
+```
