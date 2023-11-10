@@ -11,7 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
    FILES
-   GPS.msg
+   JWG.msg
+   NEG.msg
  )
 generate_messages(DEPENDENCIES
   std_msgs
@@ -26,10 +27,17 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+add_executable(test test.cpp)
+target_link_libraries(test ${catkin_LIBRARIES})
+add_dependencies(test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(serialPort serialPort.cpp)
-target_link_libraries(serialPort ${catkin_LIBRARIES})
-add_dependencies(serialPort ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(pubjwg pubjwg.cpp)
+target_link_libraries(pubjwg ${catkin_LIBRARIES})
+add_dependencies(pubjwg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(pubneg pubneg.cpp)
+target_link_libraries(pubneg ${catkin_LIBRARIES})
+add_dependencies(pubneg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(listener listener.cpp)
 target_link_libraries(listener ${catkin_LIBRARIES})
