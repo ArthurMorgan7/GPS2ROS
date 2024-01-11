@@ -1,9 +1,17 @@
 # Introduction
-Accept data in GPGGA/BESTUTM format through the serial port and convert it into topics in ROS for publishing
-
+Accept data in BESTUTM/HEADINGA format through the serial port and convert it into topics in ROS for publishing.
 
 
 # Install
+
+In order to convert the RTK message into NovatelUtmPosition which supported by ROS, you need install novatel gps driver:
+
+```bash
+sudo apt-get install ros-${ROS_DISTRO}-novatel-gps-driver
+```
+
+Then you can compile and run the program
+
 ```bash
 mkdir GPS2ROS_ws
 cd GPS2ROS_ws
@@ -12,16 +20,6 @@ cd src
 git clone https://github.com/ArthurMorgan7/GPS2ROS.git
 cd ..
 catkin_make
-
 source ./devel/setup.bash
-rosrun serialPort pubneg
-```
-
-# NOTICE
-
-```
-Default topic: "/GPS"
-Default baud rate: 115200
-Default command: log bestutm ontime 1
-Optional command:log gpgga ontime 1
+roslaunch gps start.launch
 ```

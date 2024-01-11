@@ -1,3 +1,5 @@
+// 暂时用不到
+
 #include <ros/ros.h> 
 #include <serial/serial.h>  //ROS已经内置了的串口包 
 #include <std_msgs/String.h>
@@ -8,7 +10,7 @@
 #include <cmath>
 #include <cstdlib>//string转化为double
 #include <iomanip>//保留有效小数
-#include "serialPort/JWG.h"
+#include "gps/JWG.h"
 
 // 声明全局变量 串口对象 ser
 serial::Serial ser; 
@@ -57,7 +59,7 @@ int main(int argc, char** argv)
     ros::NodeHandle nh;
     
     // 创建一个发布者对象 GPS_pub，把话题发布到 “GPS”
-    ros::Publisher GPS_pub = nh.advertise<serialPort::JWG>("GPS",1000);
+    ros::Publisher GPS_pub = nh.advertise<gps::JWG>("GPS",1000);
     
     
     /* ------------------------------- Step 2 串口设置 ------------------------------ */
@@ -103,78 +105,30 @@ int main(int argc, char** argv)
             //通过ROS串口对象读取串口信息
             //std::cout << ser.available()<<"\n";
             //std::cout << ser.read(ser.available())<<"\n";
-            strRece += ser.read(ser.available()); // 将串口的GPS数据追加到strRece尾部，读之后清空缓存
-            std::cout <<"strRece:" << strRece << "\n" ;
+            strRece = ser.read(ser.available()); // 将串口的GPS数据追加到strRece尾部，读之后清空缓存
+            // std::cout <<"strRece:" << strRece << "\n" ;
             // GPS数据实例：strRece = "$GNGGA,122020.70,3908.17943107,N,11715.45190423,E,1,17,1.5,19.497,M,-8.620,M,,*54\r\n";
             
             // Step 3.2 截取数据、解析数据
             std::string gstart = "$GPGGA";     // GPS起始标志
             std::string gend = "\r\n";      // GPS终止标志
             int i = 0, start = -1, end = -1;
-            while ( i < strRece.length() )
-            {
-                // Step 3.2.1 找起始标志
-                start = strRece.find(gstart);
-                // 如果没找到，丢弃这部分数据，但要留下最后2位,避免遗漏掉起始标志
-                if ( start == -1)
-                {
-                    ROS_INFO_STREAM("Can not find START!\n");
-                    // 该信息用于DEBUG
-                    ROS_INFO("Data:%s------------\n",strRece.c_str());
-                    if (strRece.length() > 2)   
-                        strRece = strRece.substr(strRece.length()-3);   // 从“strRece.length()-3”开始的所有字符，此时会有一个覆盖
-                        break;
-                }
-                // 如果找到了起始标志，开始找终止标志
-                else
-                {
-                    ROS_INFO_STREAM("START is finded!\n");
-                    // 找终止标志
-                    end = strRece.find(gend);
-                    // 如果没找到，把起始标志开始的数据留下，前面的数据丢弃，然后跳出循环
-                    if (end == -1)
-                    {
-                        if (end != 0)
-                        strRece = strRece.substr(start);
-                        ROS_INFO_STREAM("Can not find END!\n");
-                        break;
-                    }
-                    // 如果找到了终止标志，把这段有效的数据剪切给解析的函数，剩下的继续开始寻找
-                    else
-                    {
-                        ROS_INFO_STREAM("END is finded!\n");
-                        i = end;
-
-                        // 把有效的数据给解析的函数以获取经纬度
-                        double lat, lon, alt;
-                        RecePro(strRece.substr(start,end+2-start),lat,lon,alt); // 返回lat,lon
-                        std::cout << std::setiosflags(std::ios::fixed)<<std::setprecision(7)
-                                  << "纬度：" << lat << "; " 
-                                  << "经度：" << lon << "; "
-                                  << "高度：" << alt << "\n" ;
-                        
-                        // 发布消息到话题
-                        serialPort::JWG GPS_data;
-                        GPS_data.stamp = ros::Time::now().toSec();
-                        GPS_data.lat = lat;
-                        GPS_data.lon = lon;
-                        GPS_data.alt = alt;
-                        GPS_pub.publish(GPS_data);
-                        
-                        // 如果剩下的字符大于等于4，则继续循环寻找有效数据,如果所剩字符小于等于3则跳出循环
-                        if ( i+5 < strRece.length())
-                            strRece = strRece.substr(end+2);
-                        else
-                        {   strRece = strRece.substr(end+2);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        else    // 无数据
-        {
-            ROS_INFO_STREAM("No Data!!!\n");
+            
+            double lat, lon, alt;
+            RecePro(strRece.substr(start,end+2-start),lat,lon,alt); // 返回lat,lon
+            // std::cout << std::setiosflags(std::ios::fixed)<<std::setprecision(7)
+            //             << "纬度：" << lat << "; " 
+            //             << "经度：" << lon << "; "
+            //             << "高度：" << alt << "\n" ;
+            
+            // 发布消息到话题
+            gps::JWG GPS_data;
+            GPS_data.stamp = ros::Time::now().toSec();
+            GPS_data.lat = lat;
+            GPS_data.lon = lon;
+            GPS_data.alt = alt;
+            GPS_pub.publish(GPS_data);
+            
         }
         ros::spinOnce();
         loop_rate.sleep();  // 用 sleep 来控制频率，睡眠时间自适应，以达到指定的频率
