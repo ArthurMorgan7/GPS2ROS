@@ -10,6 +10,12 @@ In order to convert the RTK message into NovatelUtmPosition which supported by R
 sudo apt-get install ros-${ROS_DISTRO}-novatel-gps-driver
 ```
 
+You may need to modify the USB permissions:
+
+```bash
+sudo chmod 777 /dev/ttyUSB0
+```
+
 Then you can compile and run the program:
 
 ```bash
