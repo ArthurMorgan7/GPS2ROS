@@ -1,7 +1,0 @@
-<launch>
-
-    <node pkg="gps" type="trans" name="trans" output="screen"/>
-    <node pkg="gps" type="pubneg" name="pubneg" output="screen"/>
-    <node pkg="gps" type="pubheading" name="pubheading" output="screen"/>
-    <node pkg="gps" type="pubrtk_sum" name="pubrtk_sum" output="screen"/>
-</launch>
