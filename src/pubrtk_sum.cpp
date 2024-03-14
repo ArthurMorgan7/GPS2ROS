@@ -50,8 +50,6 @@ void negCallback(const gps::NEGConstPtr& msg)
 void headingCallback(const gps::HEADINGConstPtr& msg)
 {
     time_neg = msg->stamp;
-    rtk.diff_age = msg->heading;
-    
     // 把正西为0度，顺时针增大的heading，转换为-》正北为0,左正右负
     if(msg->heading <  270){
         rtk.diff_age =  90-msg->heading;
