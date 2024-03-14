@@ -51,20 +51,13 @@ void headingCallback(const gps::HEADINGConstPtr& msg)
 {
     time_neg = msg->stamp;
     rtk.diff_age = msg->heading;
-    //cout << "msg->heading" << msg->heading  <<endl;
-    // 如果顺为正
-    //if(msg->heading <  180){
-    //    rtk.diff_age = - msg->heading;
-    //}
-    //else{
-    //    rtk.diff_age = 360 - msg->heading;
-    //}
     
-    // 如果逆为正
-    // if(msg->heading <  180){
-    //     rtk.diff_age =  msg->heading;
-    // }
-    // else{
-    //     rtk.diff_age = msg->heading - 360;
-    // }
+    // 把正西为0度，顺时针增大的heading，转换为-》正北为0,左正右负
+    if(msg->heading <  270){
+        rtk.diff_age =  90-msg->heading;
+    }
+    else{
+        rtk.diff_age = 360 - msg->heading;
+    }
+    //cout << "heading" << rtk.diff_age  <<endl;
 }
