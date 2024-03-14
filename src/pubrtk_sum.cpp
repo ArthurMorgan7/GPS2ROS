@@ -17,7 +17,7 @@ void headingCallback(const gps::HEADINGConstPtr& msg);
 ///////////////////////////////// main ///////////////////////////////////
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "listener");
+    ros::init(argc, argv, "sum");
     ros::NodeHandle nh;
     ros::Subscriber sub_neg = nh.subscribe("RTK_NEG", 1000, negCallback);
     ros::Subscriber sub_heading = nh.subscribe("RTK_heading", 1000, headingCallback);
