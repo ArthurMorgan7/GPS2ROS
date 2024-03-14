@@ -36,7 +36,7 @@ int main(int argc, char** argv)
         return -1;
     }
 
-	ros::Rate loop_rate(2000);
+    ros::Rate loop_rate(2000);
     while (ros::ok())   
     {
         if (ser.available()>0)  // 有数据
